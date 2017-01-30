@@ -1,0 +1,33 @@
+<ion-header>
+
+  <ion-navbar >
+    <ion-title >{{estabelecimento.nome}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content parallax-header>
+  <div class="header-image" [style.background-image]="'url('+photo+')'" ></div>
+  <div class="divisor" ></div>
+  <div class="main-content">
+    <h1>{{estabelecimento.nome}}</h1>
+    <div class="info">
+      <div class="info-divisor">
+        <p *ngIf="estabelecimento.telefone"><ion-icon name="call"></ion-icon> <a (click)="call(estabelecimento.telefone)" >&nbsp;{{estabelecimento.telefone}}</a></p>
+        <p *ngIf="estabelecimento.celular.numero"><ion-icon name="phone-portrait"></ion-icon> <a (click)="call(estabelecimento.celular.numero)" >&nbsp;{{estabelecimento.celular.numero}}</a> <ion-icon *ngIf="estabelecimento.celular.whatsapp" name="logo-whatsapp"></ion-icon></p>
+      </div>
+      <div class="info-divisor">
+        <ion-grid>
+          <ion-row center *ngIf="estabelecimento.endereco">
+            <ion-col width-75 ><ion-icon name="map"></ion-icon> {{estabelecimento.endereco}}</ion-col>
+            <ion-col width-25 style="text-align: right" *ngIf="estabelecimento.localizacao" ><a style="text-decoration: none" [href]="linkLocalizacao"><b>Ver no mapa</b></a></ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+    
+        <p *ngIf="estabelecimento.frase" >{{estabelecimento.frase}}</p>
+        <img (click)="openImage()" *ngIf="estabelecimento.imagemAdicional" [src]="estabelecimento.imagemAdicional" alt="">
+  </div>
+</ion-content>

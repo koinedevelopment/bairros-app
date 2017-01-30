@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Sorteio
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        <span ion-text color="primary" showWhen="ios">Cancel</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-card *ngIf="sorteio">
+    <img [src]="sorteio.imagem"/>
+
+    <ion-card-content>
+      <ion-card-title>
+        {{sorteio.titulo}}
+      </ion-card-title>
+      <p>
+        {{sorteio.descricao}}
+      </p>
+      <p>
+        <b>Data do sorteio: {{sorteio.data}}</b>
+      </p>
+    </ion-card-content>
+    
+    <ion-row>
+      <ion-col>
+        <button [disabled]="inscrito" (click)="inscrever(sorteio)" ion-button text-center full color="danger" icon-left>
+          <ion-icon name='checkbox-outline'></ion-icon>
+          {{inscrito? 'Já inscrito. É só aguardar': 'Confirmar inscrição'}}
+        </button>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+</ion-content>

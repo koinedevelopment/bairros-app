@@ -1,0 +1,27 @@
+page-estabelecimento {
+    .header-image {
+       background-image: url(https://ununsplash.imgix.net/photo-1421091242698-34f6ad7fc088?fit=crop&fm=jpg&h=650&q=75&w=950);
+       background-position: center;
+        height: 40vh;
+    }
+    
+    .main-content {
+        padding: 20px;
+        background-color: white;
+    }
+    .divisor{
+        width: 100%;
+        height: 50px;
+        background-color: #0d47a1;
+    }
+
+    .info{
+        font-size: 110%;    
+    }
+
+    .info-divisor{
+        border-bottom: 1px solid #eeeeee;
+        border-top: 1px solid #eeeeee;
+    }
+
+}

@@ -1,0 +1,42 @@
+<ion-header>
+    <ion-navbar [attr.no-border-bottom]="showToolbar ? '' : null">
+      <button ion-button menuToggle *ngIf="!showToolbar">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+        <ion-title *ngIf="!showToolbar" >Meu Bairro</ion-title>
+        <ion-searchbar #searchbar *ngIf="showToolbar"
+          [(ngModel)]="myInput"
+          [showCancelButton]="true"
+          (ionInput)="filter($event)"
+          (ionCancel)="toggleSearchbar()">
+        </ion-searchbar>
+
+    <ion-buttons end *ngIf="!showToolbar">
+      <button ion-button icon-only (click)="toggleSearchbar()">
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  
+    <ion-slides *ngIf="destaques" [autoplay]="3400" [loop]="true" [pager]="true" style="max-height:200px; min-height: 100px" (ionSlideWillChange)="autostart()" >
+      <ion-slide *ngFor="let destaque of destaques" (click)="selectDestaque(destaque)" >
+        <h2>{{destaque.nome_estabelecimento}}</h2>
+        <p>{{destaque.frase}}</p>
+      </ion-slide>
+    </ion-slides>
+    <ion-list [virtualScroll]="isSearch && !isSearchEmpty? filteredEstabelecimentos: categorias">
+      <ion-item *virtualItem="let item" >
+        <ion-avatar item-left (click)="isSearch && !isSearchEmpty? openImage(item): ''" >
+          <img [src]="isSearch && !isSearchEmpty? item.imagemCapa? item.imagemCapa: 'assets/no-photo.png': item.iconeUrl? item.iconeUrl : 'assets/shop.png'">
+        </ion-avatar>
+        <div (click)="onSelectItem(item)" [class]="isSearch && !isSearchEmpty? 'lista-estabelecimentos': 'lista-categorias'">
+          {{ item.nome }}
+        </div>
+      </ion-item>
+
+    </ion-list>
+  
+</ion-content>

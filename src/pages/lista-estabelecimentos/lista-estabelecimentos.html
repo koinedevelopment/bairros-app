@@ -1,0 +1,24 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{title}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list [virtualScroll]="estabelecimentos">
+
+      <ion-item *virtualItem="let estabelecimento" >
+        <ion-avatar item-left>
+          <img [src]="estabelecimento.imagemCapa? estabelecimento.imagemCapa: 'assets/no-photo.png'" (click)="openImage(estabelecimento)" >
+        </ion-avatar>
+        <div (click)="onSelectEstabelecimento(estabelecimento)">
+          <h2 class="titulo">{{ estabelecimento.nome }}</h2>
+          <p class="descricao">{{estabelecimento.endereco}}</p>
+        </div>          
+      </ion-item>
+
+    </ion-list>
+</ion-content>

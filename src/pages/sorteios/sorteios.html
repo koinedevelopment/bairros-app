@@ -1,0 +1,40 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Sorteios</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content class="cards-bg">
+
+  <ion-card *ngFor="let sorteio of sorteios" >
+
+    <img [src]="sorteio.imagem"/>
+
+    <ion-card-content>
+      <ion-card-title>
+        {{sorteio.titulo}}
+      </ion-card-title>
+      <p>
+        {{sorteio.descricao}}
+      </p>
+    </ion-card-content>
+
+    <ion-row no-padding>
+      <ion-col width-50>
+        <button style="font-size: 70%" (click)="inscrever(sorteio)" ion-button clear small color="danger" icon-left>
+          <ion-icon name='checkbox-outline'></ion-icon>
+          Inscrever-se
+        </button>
+      </ion-col>
+      <ion-col text-right width-50>
+        <button style="font-size: 70%" (click)="goToEstabelecimento(sorteio.key_estabelecimento)" ion-button clear small color="danger" icon-left>
+          <ion-icon name='arrow-round-forward'></ion-icon>
+          Estabelecimento
+        </button>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+</ion-content>
