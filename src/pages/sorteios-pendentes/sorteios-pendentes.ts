@@ -2,40 +2,33 @@ import { SorteioModalPage } from './../sorteio-modal/sorteio-modal';
 import { FireService } from './../../services/fire.service';
 import { EstabelecimentoPage } from './../estabelecimento/estabelecimento';
 import { Component } from '@angular/core';
-import { NavController, NavParams, ModalController, LoadingController, Platform } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 
 @Component({
-  selector: 'page-sorteios-realizados',
-  templateUrl: 'sorteios-realizados.html'
+  selector: 'page-sorteios-pendentes',
+  templateUrl: 'sorteios-pendentes.html'
 })
-export class SorteiosRealizadosPage {
+export class SorteiosPendentesPage {
   sorteios: any;
-  ganhador: boolean = false;
-  nomeGanhador: string = '';
-  idUser: string = '';
+
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
     public fireService: FireService, 
     public modalCtrl: ModalController,
-    public loadingCtrl: LoadingController,
-    public platform: Platform
-    ) {
-    
-  }
+    public loadingCtrl: LoadingController
+    ) {}
 
   ionViewDidLoad() {
+    console.log('ionViewDidLoad PromocoesPage');
     let loading = this.loadingCtrl.create({
       content: 'Carregando sorteios'
     });
     loading.present();
-
-    this.idUser = this.fireService.uid;
-    this.fireService.getSorteiosRealizados()
+    this.fireService.getSorteios()
       .subscribe(sorteios => {
         this.sorteios = sorteios;
         loading.dismiss();
-        console.log(this.sorteios);
       })
   }
 
@@ -49,11 +42,7 @@ export class SorteiosRealizadosPage {
   inscrever(sorteio){
     let modalSorteio = this.modalCtrl.create(SorteioModalPage,{sorteio: sorteio});
     modalSorteio.present();
-  }
 
-  getNome(sorteio): string{
-    return sorteio.titulo;
   }
-
 
 }

@@ -1,7 +1,7 @@
 import { FireService } from './../../services/fire.service';
 import { Component} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams, AlertController, Platform } from 'ionic-angular';
 import { CallNumber, PhotoViewer } from 'ionic-native';
 
 @Component({
@@ -17,7 +17,8 @@ export class EstabelecimentoPage {
     public navParams: NavParams, 
     public fireService: FireService, 
     public alertCtrl: AlertController,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    public platform: Platform
   ){
 
     this.estabelecimento = this.navParams.get('estabelecimento');
@@ -32,8 +33,18 @@ export class EstabelecimentoPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad EstabelecimentoPage');
-    console.log(this.photo);
+    this.platform.registerBackButtonAction(() => {
+      this.navCtrl.pop();
+    })
+
+  }
+
+  ionViewDidEnter(){
+    this.platform.registerBackButtonAction(() => {
+        console.log(this.navCtrl.getActive().name)
+        if(this.navCtrl.getActive().name == 'EstabelecimentoPage')
+          this.navCtrl.pop();
+      })
   }
 
   sanitize(url:string){

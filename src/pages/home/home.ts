@@ -3,7 +3,7 @@ import { EstabelecimentoPage } from './../estabelecimento/estabelecimento';
 import { ListaEstabelecimentosPage } from './../lista-estabelecimentos/lista-estabelecimentos';
 import { FireService } from './../../services/fire.service';
 import { Component, ViewChild, ViewChildren, QueryList, ChangeDetectorRef  } from '@angular/core';
-import { NavController, Slides, Content, Searchbar, LoadingController, Platform } from 'ionic-angular';
+import { NavController, Slides, Content, Searchbar, LoadingController, Platform, AlertController } from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
@@ -29,12 +29,52 @@ export class HomePage{
     public changeDetectionRef: ChangeDetectorRef, 
     public fireService: FireService,
     public loadingCtrl: LoadingController,
-    public platform: Platform
+    public platform: Platform,
+    public alertCtrl: AlertController
     ) { 
       
     }
 
+  ionViewWillUnload(){
+    console.log('ionViewWillUnload');
+  }
+
+  ionViewDidEnter(){
+    console.log('ionViewDidEnter');
+    this.platform.registerBackButtonAction(()=>{
+
+        if(this.navCtrl.getActive().name == 'HomePage'){
+          console.log('Clicou em sair register backbutton')
+          if(this.isSearch){
+          this.toggleSearchbar();
+          }
+          else{
+            let alert = this.alertCtrl.create({
+              title: 'Deseja sair?',
+              buttons: [
+                {
+                  text: 'Cancelar',
+                  role: 'cancel',
+                  handler: () => {
+                  }
+                },
+                {
+                  text: 'Sair',
+                  handler: () => {
+                    this.exitApp();
+                  }
+                }
+              ]
+            })
+            alert.present();
+          }  
+        }
+        
+      },0)
+  }
+
   ionViewDidLoad(){
+
     this.fireService.getDestaques()
       .subscribe(destaques => {
         this.destaques = destaques;
@@ -59,6 +99,10 @@ export class HomePage{
     this.slides.startAutoplay();
   }
 
+  exitApp(){
+    console.log('Exit app');
+    this.platform.exitApp();
+  }
 
   toggleSearchbar(){
     this.showToolbar = !this.showToolbar;

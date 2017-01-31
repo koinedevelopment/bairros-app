@@ -23,8 +23,7 @@
   
     <ion-slides *ngIf="destaques" [autoplay]="3400" [loop]="true" [pager]="true" style="max-height:200px; min-height: 100px" (ionSlideWillChange)="autostart()" >
       <ion-slide *ngFor="let destaque of destaques" (click)="selectDestaque(destaque)" >
-        <h2>{{destaque.nome_estabelecimento}}</h2>
-        <p>{{destaque.frase}}</p>
+        <img [src]="destaque.imagemCapa" />
       </ion-slide>
     </ion-slides>
     <ion-list [virtualScroll]="isSearch && !isSearchEmpty? filteredEstabelecimentos: categorias">

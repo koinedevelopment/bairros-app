@@ -1,6 +1,6 @@
 import { FireService } from './../../services/fire.service';
 import { Component } from '@angular/core';
-import { NavController, NavParams, ViewController } from 'ionic-angular';
+import { NavController, NavParams, ViewController, Platform } from 'ionic-angular';
 
 /*
   Generated class for the SorteioModal page.
@@ -19,7 +19,8 @@ export class SorteioModalPage {
     public navCtrl: NavController, 
     public navParams: NavParams, 
     public viewCtrl: ViewController,
-    public fireService: FireService
+    public fireService: FireService,
+    public platform: Platform
     ) {}
 
   ionViewDidLoad() {
@@ -30,6 +31,18 @@ export class SorteioModalPage {
           this.inscrito = true;
       })
     console.log('Sorteio: ', this.sorteio);
+  }
+
+  ionViewDidEnter(){
+    console.log('this.viewCtrl.data: ', this.viewCtrl.data)
+    this.platform.registerBackButtonAction(() => {
+      try {
+        this.viewCtrl.dismiss();
+      }
+      catch(e) {
+        console.log(e);
+      }
+    })
   }
 
   dismiss() {

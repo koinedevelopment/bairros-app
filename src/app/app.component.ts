@@ -5,7 +5,6 @@ import { Platform, Events, NavController, NavParams, Modal } from 'ionic-angular
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import * as firebase from 'firebase';
-
 @Component({
   templateUrl: 'app.html',
   queries: {
@@ -17,12 +16,31 @@ export class MyApp {
   categorias;
   user; 
   public nav: any;
-  constructor(platform: Platform, private fireService: FireService, private events: Events) {
+  constructor(
+    platform: Platform, 
+    public fireService: FireService, 
+    public events: Events
+    ) {
+
     platform.ready().then(() => {
-    this.events.subscribe('user:registered', user => {
-      this.user = user;
-      console.log('this.user: ',this.user)
-    })
+      console.log(this.nav);
+      this.fireService.lockOrientation();
+      this.fireService.checkConnection();
+      firebase.auth().onAuthStateChanged(user => {
+        if(user){
+          setTimeout(() => {
+            this.fireService.getUserByUid(user.uid)
+              .then(snap => this.user = snap.val())
+          }, 500)
+        }
+      })
+
+      this.events.subscribe('user:registered', user => {
+        this.user = user;
+        console.log('this.user: ',this.user)
+      });
+      
+    
 
     this.fireService.getCategorias()
       .subscribe(categorias => {

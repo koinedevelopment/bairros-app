@@ -1,7 +1,7 @@
 import { EstabelecimentoPage } from './../estabelecimento/estabelecimento';
 import { FireService } from './../../services/fire.service';
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, Platform } from 'ionic-angular';
 import { PhotoViewer } from 'ionic-native';
 
 @Component({
@@ -15,17 +15,25 @@ export class ListaEstabelecimentosPage {
   categoria: string = '';
   title: string = '';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public fireService: FireService, public loadingCtrl: LoadingController) {
-    this.keyCategoria = this.navParams.get('keyCategoria');
-    this.fireService.getCategoriaByKey(this.keyCategoria)
-      .subscribe(categoria => {
-        this.categoria = categoria;
-        this.title = categoria.nome;
-      })
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    public fireService: FireService, 
+    public loadingCtrl: LoadingController,
+    public platform: Platform
+    ){
+      
+      this.keyCategoria = this.navParams.get('keyCategoria');
+      this.fireService.getCategoriaByKey(this.keyCategoria)
+        .subscribe(categoria => {
+          this.categoria = categoria;
+          this.title = categoria.nome;
+        })
       
   }
 
   ionViewDidLoad() {
+
     let loading = this.loadingCtrl.create({
         content: 'Carregando estabelecimentos',
         showBackdrop: false
@@ -48,6 +56,14 @@ export class ListaEstabelecimentosPage {
   onSelectEstabelecimento(estabelecimento){
     this.navCtrl.push(EstabelecimentoPage, {estabelecimento: estabelecimento});
     console.log(estabelecimento);
+  }
+
+  ionViewDidEnter(){
+    this.platform.registerBackButtonAction(() => {
+        console.log(this.navCtrl.getActive().name)
+        if(this.navCtrl.getActive().name == 'ListaEstabelecimentosPage')
+          this.navCtrl.pop();
+      })
   }
 
 }

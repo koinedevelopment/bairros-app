@@ -1,3 +1,5 @@
+import { SorteiosRealizadosPage } from './../pages/sorteios-realizados/sorteios-realizados';
+import { SorteiosPendentesPage } from './../pages/sorteios-pendentes/sorteios-pendentes';
 import { SorteioModalPage } from './../pages/sorteio-modal/sorteio-modal';
 import { SorteiosPage } from './../pages/sorteios/sorteios';
 import { ParallaxHeader } from './../components/parallax-header/parallax-header';
@@ -26,6 +28,8 @@ const config = {
     ListaEstabelecimentosPage,
     SorteiosPage,
     SorteioModalPage,
+    SorteiosPendentesPage,
+    SorteiosRealizadosPage,
     ParallaxHeader
   ],
   imports: [
@@ -39,6 +43,8 @@ const config = {
     EstabelecimentoPage,
     ListaEstabelecimentosPage,
     SorteiosPage,
+    SorteiosPendentesPage,
+    SorteiosRealizadosPage,
     SorteioModalPage
   ],
   providers: [

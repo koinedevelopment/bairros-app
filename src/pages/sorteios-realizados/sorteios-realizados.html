@@ -1,18 +1,40 @@
-<!--
-  Generated template for the SorteiosRealizados page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>sorteios-realizados</ion-title>
+    <ion-title>Sorteios</ion-title>
   </ion-navbar>
 
 </ion-header>
 
+<ion-content class="cards-bg">
 
-<ion-content padding>
+  <ion-card *ngFor="let sorteio of sorteios" >
 
+    <img [src]="sorteio.imagem"/>
+
+    <ion-card-content>
+      <ion-card-title>
+        {{sorteio.titulo}}
+      </ion-card-title>
+      <p>
+        {{sorteio.descricao}}
+      </p>
+      <p>
+        <b *ngIf="sorteio.ganhador">
+          Ganhador: {{sorteio.ganhador.nome}}<br>
+          <p *ngIf="sorteio.ganhador.id == idUser" style="font-size: 160%; color: #1a237e" >PARABÉNS!! VOCÊ É O GANHADOR!!!</p>
+        </b>
+      </p>
+    </ion-card-content>
+
+    <ion-row no-padding>
+      <ion-col text-right width-50>
+        <button style="font-size: 70%" (click)="goToEstabelecimento(sorteio.key_estabelecimento)" ion-button clear small color="danger" icon-left>
+          <ion-icon name='arrow-round-forward'></ion-icon>
+          Ir para Estabelecimento
+        </button>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
 </ion-content>

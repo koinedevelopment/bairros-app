@@ -2,24 +2,38 @@ import { Injectable } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Rx';
-import { GooglePlus, Facebook } from 'ionic-native';
+import { GooglePlus, Facebook, Network, ScreenOrientation } from 'ionic-native';
 import { Events } from 'ionic-angular';
- 
+
+declare var navigator: any;
+declare var Connection: any;
+
 @Injectable()
 export class FireService {
-
+    public uid: string = ''
     constructor(public af: AngularFire, public events: Events) {
         firebase.auth().onAuthStateChanged(user => {
-            console.log('onAuthState ',user);
             if(user){
-                this.getUserByUid(user.uid)
+                this.uid = user.uid;
+                console.log('onAuthState ',user);
+                /* this.getUserByUid(user.uid)
                     .then(snap => {
                         this.events.publish('user:registered', snap.val())
-                    })
+                    }) */
             }
         })
     }
 
+    checkConnection(){
+        Network.onConnect()
+            .subscribe(_ =>{
+                console.log('console.log: ', Network.connection);
+            })
+    }
+
+    lockOrientation(){
+        ScreenOrientation.lockOrientation('portrait');
+    }
     saveCategoria(categoria: string): firebase.Promise<any> {
         return firebase.database().ref('categorias/').push({nome: categoria});
     }
@@ -71,12 +85,26 @@ export class FireService {
         })
     }
 
+    getSorteiosRealizados(): Observable<any> {
+        return this.af.database.list('sorteios/', {
+            query: {
+                orderByChild: 'pendente',
+                equalTo: false
+            }
+        })
+    }
+
     inscreverUsuario(sorteio: any):firebase.Promise<any> {
         let uid = firebase.auth().currentUser.uid;
+        let email = firebase.auth().currentUser.email;
+        let nome = firebase.auth().currentUser.displayName;
+
         return this.af.database.list('inscricoes/').push({
             id_sorteio: sorteio.$key,
             id_usuario: uid,
-            sorteio_usuario: sorteio.$key+'_'+uid
+            sorteio_usuario: sorteio.$key+'_'+uid,
+            nome_usuario: nome,
+            email_usuario: email
         });
     }
 
@@ -102,12 +130,12 @@ export class FireService {
                 let credential = firebase.auth.GoogleAuthProvider.credential(user.idToken);
                 firebase.auth().signInWithCredential(credential)
                     .then(data => {
-                        this.saveUserInfo(user)
+                        this.saveUserInfo(user, 'google')
                             .then(_ => {
-                                this.getUserByUid(data.uid)
+                                 this.getUserByUid(user.uid)
                                     .then(snap => {
-                                        console.log('Usuário criado');
-                                    })
+                                        //this.events.publish('user:registered', snap.val())
+                                    }) 
                             })
                     })
                     .catch(error => {
@@ -123,7 +151,13 @@ export class FireService {
                 firebase.auth().signInWithCredential(credential)
                     .then(user => {
                         console.log('Login with facebook', user);
-                        this.saveUserInfo(user);
+                        this.saveUserInfo(user, 'facebook')
+                            .then(_ => {
+                                this.getUserByUid(user.uid)
+                                    .then(snap => {
+                                        //this.events.publish('user:registered', snap.val())
+                                    }) 
+                            })
                     })
                     .catch(err => {
                         console.log(err)
@@ -135,7 +169,13 @@ export class FireService {
                                             firebase.auth().signInWithCredential(credentialReturned)
                                                 .then(userLogged => {
                                                     userLogged.link(credential);
-                                                    this.saveUserInfo(userLogged);
+                                                    this.saveUserInfo(userLogged, 'facebook')
+                                                        .then(_ => {
+                                                             this.getUserByUid(userLogged.uid)
+                                                                .then(snap => {
+                                                                   // this.events.publish('user:registered', snap.val())
+                                                                }) 
+                                                        })
                                                 })
                                                 .catch(error => {
                                                     console.log('Erro após link: ',error);
@@ -148,14 +188,15 @@ export class FireService {
             })
     }
 
-    saveUserInfo(user){
+    saveUserInfo(user:any, provider: string){
+        console.log('user saveinfo: ', user);
         let currentUser = firebase.auth().currentUser; 
         let uid = currentUser.uid;
         console.log('Current user (Save user info)', currentUser);
         let promise: Promise<any>; 
         let obj_user: any;
         //Tratando se o usuário logou com o Facebook ou com o Google. Alguns campos tem nomes diferentes
-        if(user.providerData[0].providerId == 'facebook.com'){
+        if(provider == 'facebook'){
             obj_user = {
                 uid: uid,
                 nome: user.displayName,
@@ -164,7 +205,7 @@ export class FireService {
             }
         }
 
-        if(user.providerData[0].providerId == 'google.com'){
+        if(provider == 'google'){
             obj_user = {
                 uid: uid,
                 nome: user.displayName,
@@ -175,11 +216,15 @@ export class FireService {
         promise = new Promise((resolve, reject)=>{
             firebase.database().ref('usuarios_app/'+uid).once('value')
                 .then(snapshot => {
+                    console.log('snapshot verificação se há usuario cadastrado', snapshot.val());
                     if(!snapshot.val()){
                         firebase.database().ref('usuarios_app/'+uid).set(obj_user)
                         .then(data => {
                             resolve(true);
                         })
+                    }
+                    if(snapshot.val()){
+                        //this.events.publish('user:registered', snapshot.val())
                     }
                 })
         })
@@ -206,6 +251,23 @@ export class FireService {
         return firebase.database().ref('usuarios_app/'+uid).once('value');
     }
 
+    getUserId():string{
+        return firebase.auth().currentUser.uid;
+    }
+
+    checkLogin(){
+        let uid = firebase.auth().currentUser.uid;
+        this.getUserByUid(uid)
+            .then(snap => {
+                if(snap.val()){
+                    console.log('Está logado.')
+                    //this.events.publish('user:registered', snap.val())
+                }
+                else{
+                    console.log('Nao está logado');
+                }
+            })
+    }
     logout(){
         return firebase.auth().signOut();
     }
