@@ -123,7 +123,7 @@ export class FireService {
     loginWithGoogle(){
         console.log('Login with google');
         GooglePlus.login({
-            'webClientId': '638539267125-m93o2rp7gd1ueb6edt9ek8qkmqsh4ge4.apps.googleusercontent.com' 
+            'webClientId': '1021888722973-nm3dbhme2o6mbemjt4akh0s6vh8gcp79.apps.googleusercontent.com' 
         })
             .then(user => {
                 console.log(user);

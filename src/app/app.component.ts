@@ -1,7 +1,7 @@
 import { SorteiosPage } from './../pages/sorteios/sorteios';
 import { FireService } from './../services/fire.service';
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Events, NavController, NavParams, Modal } from 'ionic-angular';
+import { Platform, Events, NavController, NavParams, Modal, LoadingController } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import * as firebase from 'firebase';
@@ -15,23 +15,32 @@ export class MyApp {
   rootPage = HomePage;
   categorias;
   user; 
+
   public nav: any;
   constructor(
     platform: Platform, 
     public fireService: FireService, 
-    public events: Events
+    public events: Events,
+    public loadingCtrl: LoadingController
     ) {
 
     platform.ready().then(() => {
-      console.log(this.nav);
+      Splashscreen.hide();
       this.fireService.lockOrientation();
       this.fireService.checkConnection();
       firebase.auth().onAuthStateChanged(user => {
         if(user){
-          setTimeout(() => {
-            this.fireService.getUserByUid(user.uid)
-              .then(snap => this.user = snap.val())
-          }, 500)
+          let loading = this.loadingCtrl.create({
+            content: 'Acessando conta...',
+            showBackdrop: false
+          });
+          loading.present()
+          this.fireService.getUserByUid(user.uid)
+            .then(snap => {
+              loading.dismiss();
+              this.user = snap.val();
+            })
+
         }
       })
 

@@ -1,10 +1,11 @@
 {
-  "name": "Ionic",
-  "short_name": "Ionic",
+  "name": "Ofertas MCZ",
+  "short_name": "Ofertas MCZ",
   "start_url": "index.html",
   "display": "standalone",
+  ​​"orientation": "portrait-primary",
   "icons": [{
-    "src": "assets/imgs/logo.png",
+    "src": "assets/imgs/icon.png",
     "sizes": "512x512",
     "type": "image/png"
   }],

@@ -40,7 +40,6 @@ export class HomePage{
   }
 
   ionViewDidEnter(){
-    console.log('ionViewDidEnter');
     this.platform.registerBackButtonAction(()=>{
 
         if(this.navCtrl.getActive().name == 'HomePage'){
@@ -133,7 +132,7 @@ export class HomePage{
       this.isSearchEmpty = true;
     else{
       this.isSearchEmpty = search.length > 0? false: true; //Verifica se o usuário digitou alguma coisa no searchbox para que o aplicativo não pesquise com o searchbox vazio
-      this.filteredEstabelecimentos = this.estabelecimentos.filter(estabelecimento => estabelecimento.nome.toUpperCase().includes(search.toUpperCase()));
+      this.filteredEstabelecimentos = this.estabelecimentos.filter(estabelecimento => estabelecimento.nome.toUpperCase().includes(search.toUpperCase()) || estabelecimento.palavras_chave.toUpperCase().includes(search.toUpperCase()));
       console.log(this.filteredEstabelecimentos);
       console.log('searchbar: ', this.searchbar);
     }

@@ -8,6 +8,11 @@
 
 
 <ion-content padding>
+
+  <div class="center-spinner" *ngIf='loading'>
+    <ion-spinner name="bubbles"></ion-spinner>
+  </div>
+  
   <ion-list [virtualScroll]="estabelecimentos">
 
       <ion-item *virtualItem="let estabelecimento" >

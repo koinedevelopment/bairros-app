@@ -14,6 +14,7 @@ export class ListaEstabelecimentosPage {
   estabelecimentos: any[];
   categoria: string = '';
   title: string = '';
+  loading: boolean = true;
 
   constructor(
     public navCtrl: NavController, 
@@ -38,12 +39,14 @@ export class ListaEstabelecimentosPage {
         content: 'Carregando estabelecimentos',
         showBackdrop: false
       });
-    loading.present();
+    
+     // loading.present();
+
     this.fireService.getEstabelecimentosByKeyCategoria(this.keyCategoria)
       .subscribe(estabelecimentos => {
-        loading.dismiss();
+        //loading.dismiss();
+        this.loading = false;
         this.estabelecimentos = estabelecimentos;
-        console.log(this.estabelecimentos);
       });
 
   }
