@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Login
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">
+        <span ion-text color="primary" showWhen="ios">Cancel</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <br>
+  <ion-row>
+    <ion-col width-80 offset-10>
+      <div class="alert">
+        O email informado já está sendo utilizado em outra conta. Entre com usuário e senha
+      </div>    
+    </ion-col>
+  </ion-row>
+  <br>
+  <ion-row>
+    <ion-col width-80 offset-10>
+      <ion-list>
+        <ion-item>
+          <ion-label>Email</ion-label>
+          <ion-input type="text" [value]="email" disabled ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Password</ion-label>
+          <ion-input type="password" [(ngModel)]="senha" ></ion-input>
+        </ion-item>
+      </ion-list>
+      <button ion-button full (click)="login()" >Entrar</button>
+    </ion-col>
+  </ion-row>
+  
+</ion-content>

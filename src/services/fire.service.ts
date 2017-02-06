@@ -10,7 +10,9 @@ declare var Connection: any;
 
 @Injectable()
 export class FireService {
-    public uid: string = ''
+    public uid: string = '';
+    public auth = firebase.auth();
+
     constructor(public af: AngularFire, public events: Events) {
         firebase.auth().onAuthStateChanged(user => {
             if(user){
@@ -120,7 +122,7 @@ export class FireService {
 
     //AUTH
 
-    loginWithGoogle(){
+/*    loginWithGoogle(){
         console.log('Login with google');
         GooglePlus.login({
             'webClientId': '1021888722973-nm3dbhme2o6mbemjt4akh0s6vh8gcp79.apps.googleusercontent.com' 
@@ -142,50 +144,64 @@ export class FireService {
                         console.log(error);
                     })
             });
+    } */
+
+    loginWithFacebook(): Promise<any>{
+        let promise: Promise<any>;
+        promise = new Promise((resolve, reject) => {
+            Facebook.login(['user_friends', 'public_profile', 'email'])
+                .then(userFacebook => {
+                    let accessToken = userFacebook.authResponse.accessToken;
+                    let credential: firebase.auth.AuthCredential;
+            
+                    console.log('credential: ', credential)
+                    console.log('firebase authProvider: ', firebase.auth.FacebookAuthProvider.credential(accessToken));
+                    firebase.auth().signInWithCredential(firebase.auth.FacebookAuthProvider.credential(accessToken))
+                        .then(user => {
+                            console.log('User após credencial: ', user);
+                            this.saveUserInfoCurrent();
+                            return resolve('logado');
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            if(err['code'] == "auth/email-already-in-use" || err['code'] == "auth/account-exists-with-different-credential"){
+                                return resolve(err);
+
+                            }
+                        })
+                })
+        });
+        return promise;
     }
 
-    loginWithFacebook(){
-        Facebook.login(['user_friends', 'public_profile', 'email'])
-            .then(userFacebook => {
-                let credential = firebase.auth.FacebookAuthProvider.credential(userFacebook.authResponse.accessToken);
-                firebase.auth().signInWithCredential(credential)
-                    .then(user => {
-                        console.log('Login with facebook', user);
-                        this.saveUserInfo(user, 'facebook')
+    loginWithPassword(email: string, password: string, credencial: any): firebase.Promise<any>{
+        return firebase.auth().signInWithEmailAndPassword(email, password)
+            .then(user => {
+                firebase.auth().currentUser.link(credencial)
+                    .then(result => {
+                        console.log(result);
+                        this.auth.currentUser.updateProfile({displayName: result.providerData[0].displayName, photoURL: result.providerData[0].photoURL})
                             .then(_ => {
-                                this.getUserByUid(user.uid)
-                                    .then(snap => {
-                                        //this.events.publish('user:registered', snap.val())
-                                    }) 
+                                console.log(this.auth.currentUser);
+                                this.saveUserInfoCurrent();
                             })
                     })
-                    .catch(err => {
-                        console.log(err)
-                        if(err['code'] == 'auth/account-exists-with-different-credential'){
-                            firebase.auth().fetchProvidersForEmail(err['email'])
-                                .then(providers => {
-                                    this.fetchProviders(providers[0])
-                                        .then(credentialReturned => {
-                                            firebase.auth().signInWithCredential(credentialReturned)
-                                                .then(userLogged => {
-                                                    userLogged.link(credential);
-                                                    this.saveUserInfo(userLogged, 'facebook')
-                                                        .then(_ => {
-                                                             this.getUserByUid(userLogged.uid)
-                                                                .then(snap => {
-                                                                   // this.events.publish('user:registered', snap.val())
-                                                                }) 
-                                                        })
-                                                })
-                                                .catch(error => {
-                                                    console.log('Erro após link: ',error);
-                                                });
-
-                                        })
-                                })
-                        }
-                    })
             })
+            .catch(err => {
+                console.log(err);
+                return err;
+            })
+    }
+
+    saveUserInfoCurrent():firebase.Promise<any>{
+        let user = this.auth.currentUser;
+        let obj_user = {
+                uid: user.uid,
+                nome: user.displayName,
+                imagem: user.photoURL,
+                email: user.email 
+            }
+        return firebase.database().ref('usuarios_app/'+user.uid).set(obj_user)
     }
 
     saveUserInfo(user:any, provider: string){

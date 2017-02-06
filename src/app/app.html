@@ -7,8 +7,8 @@
       </div>
       <a menuClose>
         <div *ngIf="user && !loading">
-          <img *ngIf="user" class="profile-picture" [src]="user.imagem">
-          <h4 light >{{user.nome}}</h4>
+          <img *ngIf="user" class="profile-picture" [src]="user.photoURL">
+          <h4 light >{{user.displayName}}</h4>
           <hr>
           <ion-list class="list-full-border" *ngIf="user">
             <button class="item-menu" ion-item menuClose clear (click)="goToSorteios()" >

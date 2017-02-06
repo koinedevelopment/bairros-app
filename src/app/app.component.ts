@@ -1,7 +1,8 @@
+import { ModalLoginPage } from './../pages/modal-login/modal-login';
 import { SorteiosPage } from './../pages/sorteios/sorteios';
 import { FireService } from './../services/fire.service';
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Events, NavController, NavParams, Modal, LoadingController } from 'ionic-angular';
+import { Platform, Events, NavController, NavParams, Modal, LoadingController, ModalController } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import * as firebase from 'firebase';
@@ -21,27 +22,16 @@ export class MyApp {
     platform: Platform, 
     public fireService: FireService, 
     public events: Events,
-    public loadingCtrl: LoadingController
+    public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController
     ) {
 
     platform.ready().then(() => {
       Splashscreen.hide();
-      this.fireService.lockOrientation();
-      this.fireService.checkConnection();
+      //this.fireService.lockOrientation();
+      //this.fireService.checkConnection();
       firebase.auth().onAuthStateChanged(user => {
-        if(user){
-          let loading = this.loadingCtrl.create({
-            content: 'Acessando conta...',
-            showBackdrop: false
-          });
-          loading.present()
-          this.fireService.getUserByUid(user.uid)
-            .then(snap => {
-              loading.dismiss();
-              this.user = snap.val();
-            })
-
-        }
+        this.user = user;
       })
 
       this.events.subscribe('user:registered', user => {
@@ -60,12 +50,15 @@ export class MyApp {
     });
   }
 
-  loginWithGoogle(){
-    this.fireService.loginWithGoogle();
-  }
-
   loginWithFacebook(){
-    this.fireService.loginWithFacebook();
+    this.fireService.loginWithFacebook()
+      .then(result => {
+        console.log('retorno login with facebook: ', result);
+        if(result != 'logado' && result){
+          let modalSorteio = this.modalCtrl.create(ModalLoginPage, {credencial: result.credential, email: result.email});
+          modalSorteio.present();
+        }
+      })
   }
 
   logout(){
