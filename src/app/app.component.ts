@@ -1,8 +1,9 @@
+import { ContatoPage } from './../pages/contato/contato';
 import { ModalLoginPage } from './../pages/modal-login/modal-login';
 import { SorteiosPage } from './../pages/sorteios/sorteios';
 import { FireService } from './../services/fire.service';
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Events, NavController, NavParams, Modal, LoadingController, ModalController } from 'ionic-angular';
+import { Platform, Events, NavController, NavParams, Modal, LoadingController, ModalController, MenuController } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import * as firebase from 'firebase';
@@ -23,7 +24,8 @@ export class MyApp {
     public fireService: FireService, 
     public events: Events,
     public loadingCtrl: LoadingController,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public menuCtrl: MenuController
     ) {
 
     platform.ready().then(() => {
@@ -71,5 +73,10 @@ export class MyApp {
 
   goToSorteios(){
     this.nav.push(SorteiosPage);
+  }
+
+  goToContato(){
+    this.menuCtrl.toggle();
+    this.nav.push(ContatoPage);
   }
 }
